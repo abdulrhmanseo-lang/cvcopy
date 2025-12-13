@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Score | سكور - المنصة الأولى للتوظيف والسير الذاتية</title>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700;900&family=Playfair+Display:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'IBM Plex Sans Arabic', 'sans-serif'],
+                        english: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        dark: '#050505',
+                        card: '#121212',
+                        primary: '#7C3AED',
+                        'primary-light': '#A78BFA',
+                        'primary-dark': '#5B21B6',
+                        secondary: '#E5E7EB',
+                        gold: '#F59E0B',
+                        'gold-light': '#FCD34D',
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-1000px 0' },
+                            '100%': { backgroundPosition: '1000px 0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #050505;
+            color: #E5E7EB;
+            overflow-x: hidden;
+        }
+
+        /* Premium Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0A0A0A;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7C3AED;
+        }
+
+        /* View Routing */
+        .view-section {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .view-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid #7C3AED;
+            width: 24px;
+            height: 24px;
+            -webkit-animation: spin 1s linear infinite;
+            /* Safari */
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Print simulation styles */
+        .cv-paper {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            color: black;
+            overflow: hidden;
+            position: relative;
+            transform-origin: top center;
+        }
+
+        /* Glass Utility */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.10.1",
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "axios": "https://esm.sh/axios@^1.13.2"
+  }
+}
+</script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="bg-dark text-secondary selection:bg-primary selection:text-white flex flex-col min-h-screen">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+
+            <!-- Logo -->
+            <a href="#" onclick="app.navigate('home'); return false;" class="flex items-center gap-3 group">
+                <div
+                    class="relative w-10 h-10 flex items-center justify-center bg-gradient-to-br from-primary to-indigo-600 rounded-xl shadow-lg shadow-primary/20 group-hover:rotate-12 transition-transform">
+                    <i data-lucide="star" class="w-6 h-6 text-white fill-white"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-2xl font-black text-white tracking-tight">سكور</span>
+                    <span class="text-[10px] text-primary-light font-bold uppercase tracking-[0.2em] -mt-1">Score
+                        CV</span>
+                </div>
+            </a>
+
+            <!-- AI Button (New) -->
+            <button onclick="app.navigate('ai-generate')"
+                class="hidden md:flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-105 transition-transform px-4 py-2 rounded-full text-white font-bold text-xs shadow-lg shadow-purple-500/30 mx-4">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span class="hidden lg:inline">صانع السيرة الذكي</span>
+            </button>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/5">
+                <a href="#" onclick="app.navigate('home'); return false;"
+                    class="nav-link px-5 py-2 rounded-full text-sm font-bold text-white bg-white/10 transition-all"
+                    data-target="home">الرئيسية</a>
+                <a href="#" onclick="app.navigate('templates'); return false;"
+                    class="nav-link px-5 py-2 rounded-full text-sm font-medium text-gray-400 hover:text-white transition-all"
+                    data-target="templates">القوالب</a>
+                <a href="#" onclick="app.navigate('job-guarantee'); return false;"
+                    class="nav-link px-5 py-2 rounded-full text-sm font-medium text-amber-400 hover:text-amber-300 transition-all flex items-center gap-2"
+                    data-target="job-guarantee">
+                    <i data-lucide="crown" class="w-4 h-4"></i>
+                    التوظيف المضمون
+                </a>
+                <a href="#" onclick="app.navigate('pricing'); return false;"
+                    class="nav-link px-5 py-2 rounded-full text-sm font-medium text-gray-400 hover:text-white transition-all"
+                    data-target="pricing">الباقات</a>
+                <a href="#" onclick="app.navigate('dashboard'); return false;"
+                    class="nav-link px-5 py-2 rounded-full text-sm font-medium text-gray-400 hover:text-white transition-all"
+                    data-target="dashboard">لوحة التحكم</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="hidden md:flex items-center gap-4">
+                <button id="header-auth-btn" onclick="app.navigate('auth')"
+                    class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    تسجيل الدخول
+                </button>
+                <button onclick="app.navigate('templates')"
+                    class="relative group bg-white text-dark px-6 py-2.5 rounded-xl font-bold hover:bg-gray-100 transition-all active:scale-95 flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                    <span>أنشئ سيرتك</span>
+                    <i data-lucide="sparkles"
+                        class="w-4 h-4 text-primary group-hover:rotate-12 transition-transform"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button onclick="app.toggleMenu()" class="md:hidden p-3 bg-white/5 rounded-xl text-white">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden fixed inset-0 z-50 bg-dark/95 backdrop-blur-xl pt-24 px-6 space-y-4 md:hidden animate-fade-in">
+            <button onclick="app.toggleMenu()" class="absolute top-6 right-6 p-2 bg-white/10 rounded-full text-white"><i
+                    data-lucide="x"></i></button>
+            <a href="#" onclick="app.navigate('home'); app.toggleMenu()"
+                class="block text-2xl font-bold text-white py-4 border-b border-white/10">الرئيسية</a>
+            <a href="#" onclick="app.navigate('templates'); app.toggleMenu()"
+                class="block text-2xl font-bold text-white py-4 border-b border-white/10">قوالب السيرة</a>
+            <a href="#" onclick="app.navigate('job-guarantee'); app.toggleMenu()"
+                class="block text-2xl font-bold text-amber-400 py-4 border-b border-white/10">خدمة التوظيف <span
+                    class="text-xs bg-amber-500/20 px-2 py-1 rounded-full">Pro</span></a>
+            <a href="#" onclick="app.navigate('pricing'); app.toggleMenu()"
+                class="block text-2xl font-bold text-white py-4 border-b border-white/10">الباقات والأسعار</a>
+            <a href="#" onclick="app.navigate('dashboard'); app.toggleMenu()"
+                class="block text-2xl font-bold text-white py-4 border-b border-white/10">لوحة التحكم</a>
+            <a href="#" onclick="app.navigate('auth'); app.toggleMenu()"
+                class="block text-2xl font-bold text-gray-400 py-4 border-b border-white/10">تسجيل الدخول / جديد</a>
+            <button onclick="app.navigate('templates'); app.toggleMenu()"
+                class="w-full mt-8 bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/40">ابدأ
+                الآن</button>
+        </div>
+    </header>
+
+    <!-- APP CONTENT -->
+    <main id="app-container" class="flex-grow relative z-10 overflow-hidden">
+
+        <!-- PAGE: HOME -->
+        <section id="view-home" class="view-section active">
+            <!-- Hero -->
+            <div class="relative pt-20 pb-32 lg:pt-32 overflow-hidden">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+                    <div
+                        class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse-slow">
+                    </div>
+                    <div
+                        class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]">
+                    </div>
+                </div>
+
+                <div class="container mx-auto px-4 relative z-10 text-center">
+                    <div
+                        class="inline-flex items-center gap-2 bg-white/5 border border-white/10 backdrop-blur-md text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium mb-8 shadow-2xl">
+                        <span class="flex h-2 w-2 relative">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        مدعوم بأحدث تقنيات Gemini AI 2.5
+                    </div>
+
+                    <h1
+                        class="text-5xl md:text-7xl font-black text-white leading-tight mb-8 max-w-5xl mx-auto tracking-tight">
+                        سيرتك الذاتية.. <br />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-400">بوابتك
+                            للشركات العالمية</span>
+                    </h1>
+
+                    <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                        أنشئ سيرة ذاتية تتجاوز أنظمة الفرز (ATS) بذكاء اصطناعي متطور.
+                        نحن نضمن لك الوصول للمقابلة، أو نعيد لك مالك.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <button onclick="app.navigate('templates')"
+                            class="w-full sm:w-auto px-10 py-5 bg-white text-dark text-lg font-bold rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:bg-gray-100 hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-2">
+                            <i data-lucide="wand-2" class="w-5 h-5 text-primary"></i>
+                            أنشئ سيرتك مجاناً
+                        </button>
+                        <button onclick="app.navigate('job-guarantee')"
+                            class="w-full sm:w-auto px-10 py-5 bg-white/5 text-white border border-white/10 text-lg font-bold rounded-2xl hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="briefcase" class="w-5 h-5 text-amber-400"></i>
+                            خدمة التوظيف
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="py-24 bg-card/30 relative border-t border-white/5">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-white mb-4">لماذا يختار المحترفون سكور؟</h2>
+                        <div class="w-20 h-1 bg-gradient-to-r from-primary to-transparent mx-auto rounded-full"></div>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
+                            <div
+                                class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i data-lucide="shield-check" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">ATS Friendly</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">قوالب "بريميوم" مصممة لتجاوز خوارزميات
+                                الفرز.</p>
+                        </div>
+                        <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
+                            <div
+                                class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i data-lucide="zap" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">AI Powered</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">ذكاء اصطناعي يعيد صياغة خبراتك بعبارات
+                                احترافية.</p>
+                        </div>
+                        <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
+                            <div
+                                class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i data-lucide="building-2" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">Targeted</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">استهداف مباشر لكلمات مفتاحية خاصة بـ أرامكو
+                                وسابك.</p>
+                        </div>
+                        <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
+                            <div
+                                class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i data-lucide="award" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">Premium Design</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">تصاميم مدفوعة تظهرك كخيار أول للمدراء.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: TEMPLATES -->
+        <section id="view-templates" class="view-section">
+            <div class="container mx-auto px-4 py-20">
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl font-black text-white mb-4">اختر القالب الاحترافي</h1>
+                    <p class="text-gray-400 text-lg">استثمر في مستقبلك مع قوالب Premium المعتمدة</p>
+                </div>
+                <!-- Masonry Layout -->
+                <div class="columns-1 md:columns-2 lg:columns-3 gap-8" id="templates-grid">
+                    <!-- Dynamic Templates -->
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: BUILDER -->
+        <section id="view-builder" class="view-section">
+            <div class="min-h-screen bg-[#0A0A0A] flex flex-col md:flex-row">
+
+                <!-- Sidebar Form -->
+                <div
+                    class="w-full md:w-[45%] lg:w-[40%] bg-dark border-l border-white/5 flex flex-col h-[calc(100vh-80px)] md:h-screen overflow-hidden">
+                    <div class="p-6 border-b border-white/5 flex flex-col gap-4 bg-dark z-20">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-bold text-white flex items-center gap-2"><i data-lucide="edit-3"
+                                    class="w-4 h-4 text-primary"></i> المحرر الاحترافي</h2>
+                            <div class="flex gap-2 bg-white/5 p-1 rounded-lg">
+                                <button onclick="app.builder.setLanguage('ar')" id="lang-ar"
+                                    class="px-3 py-1 text-xs rounded-md font-bold transition-all bg-primary text-white">عربي</button>
+                                <button onclick="app.builder.setLanguage('en')" id="lang-en"
+                                    class="px-3 py-1 text-xs rounded-md font-bold transition-all text-gray-400 hover:text-white">English</button>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="app.builder.analyzeATS()"
+                                class="flex-1 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-2 rounded-lg font-bold flex items-center justify-center gap-1 hover:bg-green-500/20 transition-all">
+                                <i data-lucide="scan"></i> فحص ATS
+                            </button>
+                            <button onclick="app.navigate('templates')"
+                                class="text-xs bg-white/5 text-gray-400 px-3 py-2 rounded-lg hover:text-white">تغيير
+                                القالب</button>
+                        </div>
+                    </div>
+
+                    <!-- Steps Navigation -->
+                    <div class="flex overflow-x-auto p-4 gap-2 border-b border-white/5 no-scrollbar">
+                        <button onclick="app.builder.setStep(0)" id="step-btn-0"
+                            class="step-btn active whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all">البيانات</button>
+                        <button onclick="app.builder.setStep(1)" id="step-btn-1"
+                            class="step-btn whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all">الخبرات</button>
+                        <button onclick="app.builder.setStep(2)" id="step-btn-2"
+                            class="step-btn whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all">التعليم</button>
+                        <button onclick="app.builder.setStep(3)" id="step-btn-3"
+                            class="step-btn whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all">المهارات</button>
+                    </div>
+
+                    <!-- Form Content -->
+                    <div class="flex-grow overflow-y-auto p-6 space-y-6 custom-scrollbar pb-24">
+
+                        <!-- Step 0: Personal Info -->
+                        <div id="step-content-0" class="step-content">
+                            <div class="space-y-4">
+                                <div><label class="block text-xs font-bold text-gray-500 mb-2">الاسم
+                                        الكامل</label><input type="text" id="inp-name"
+                                        oninput="app.builder.updatePreview()"
+                                        class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none"
+                                        placeholder="الاسم"></div>
+                                <div><label class="block text-xs font-bold text-gray-500 mb-2">المسمى
+                                        الوظيفي</label><input type="text" id="inp-title"
+                                        oninput="app.builder.updatePreview()"
+                                        class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none"
+                                        placeholder="مثال: مدير مشاريع"></div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><label class="block text-xs font-bold text-gray-500 mb-2">الإيميل</label><input
+                                            type="email" id="inp-email" oninput="app.builder.updatePreview()"
+                                            class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none text-left"
+                                            dir="ltr" placeholder="Email"></div>
+                                    <div><label class="block text-xs font-bold text-gray-500 mb-2">الجوال</label><input
+                                            type="text" id="inp-phone" oninput="app.builder.updatePreview()"
+                                            class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none text-left"
+                                            dir="ltr" placeholder="Phone"></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2"><label
+                                            class="block text-xs font-bold text-gray-500">الملخص المهني</label><button
+                                            onclick="app.builder.aiWrite('summary')"
+                                            class="text-xs text-primary flex items-center gap-1 hover:underline"><i
+                                                data-lucide="sparkles" class="w-3 h-3"></i> كتابة تلقائية</button></div>
+                                    <textarea id="inp-summary" oninput="app.builder.updatePreview()" rows="4"
+                                        class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none leading-relaxed"
+                                        placeholder="اكتب نبذة مختصرة..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: Experience -->
+                        <div id="step-content-1" class="step-content hidden">
+                            <div class="bg-white/5 border border-white/5 rounded-xl p-4 mb-4">
+                                <h4 class="font-bold text-white mb-2">الخبرة الأخيرة</h4>
+                                <input type="text" id="inp-exp-role" oninput="app.builder.updatePreview()"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2"
+                                    placeholder="المسمى الوظيفي">
+                                <input type="text" id="inp-exp-comp" oninput="app.builder.updatePreview()"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2"
+                                    placeholder="الشركة">
+                                <input type="text" id="inp-exp-date" oninput="app.builder.updatePreview()"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2"
+                                    placeholder="الفترة (مثال: 2020 - الآن)">
+                                <textarea id="inp-exp-desc" oninput="app.builder.updatePreview()" rows="3"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white"
+                                    placeholder="الوصف..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Education -->
+                        <div id="step-content-2" class="step-content hidden">
+                            <div class="bg-white/5 border border-white/5 rounded-xl p-4 mb-4">
+                                <input type="text" id="inp-edu-deg" oninput="app.builder.updatePreview()"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2"
+                                    placeholder="الدرجة العلمية">
+                                <input type="text" id="inp-edu-uni" oninput="app.builder.updatePreview()"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2"
+                                    placeholder="الجامعة">
+                                <input type="text" id="inp-edu-year" oninput="app.builder.updatePreview()"
+                                    class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white"
+                                    placeholder="سنة التخرج">
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Skills -->
+                        <div id="step-content-3" class="step-content hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-2">المهارات (افصل بفاصلة)</label>
+                            <textarea id="inp-skills" oninput="app.builder.updatePreview()" rows="4"
+                                class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none"
+                                placeholder="قيادة، إدارة وقت، Excel..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Pane -->
+                <div class="hidden md:flex flex-col flex-grow bg-[#1a1a1a] items-center justify-center p-8 relative">
+                    <div class="absolute top-6 left-6 flex gap-2 z-30">
+                        <button onclick="app.builder.finish()"
+                            class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i> تحميل (نسخة مدفوعة)
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Preview Container -->
+                    <div id="cv-wrapper"
+                        class="transform scale-[0.65] lg:scale-[0.75] origin-top shadow-2xl transition-all duration-300">
+                        <div id="cv-preview" class="cv-paper">
+                            <!-- Content injected via JS based on template -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other Pages (Dashboard, Auth, etc. - kept simple) -->
+        <section id="view-dashboard" class="view-section">
+            <div class="min-h-screen bg-dark pt-28 px-4 pb-20">
+                <div class="container mx-auto max-w-6xl">
+                    <!-- Dash Header -->
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+                        <div>
+                            <h1 class="text-3xl font-black text-white mb-1">لوحة التحكم</h1>
+                            <p class="text-gray-400">تابع حالة سيرتك الذاتية وفرص التوظيف</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <span
+                                class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="crown" class="w-4 h-4 text-amber-500"></i>
+                                <span>الباقة: <span id="dash-plan" class="text-amber-500">Free</span></span>
+                            </span>
+                            <button onclick="app.auth.logout()"
+                                class="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-xl text-sm font-bold transition-all">تسجيل
+                                خروج</button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div
+                            class="bg-[#121212] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-primary/30 transition-all">
+                            <div
+                                class="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="relative z-10">
+                                <div class="text-gray-400 text-sm font-bold mb-2">السير الذاتية النشطة</div>
+                                <div class="text-4xl font-black text-white mb-2" id="dash-cvs">0</div>
+                                <button onclick="app.navigate('templates')"
+                                    class="text-primary text-xs font-bold hover:underline flex items-center gap-1">إنشاء
+                                    جديد <i data-lucide="plus" class="w-3"></i></button>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-[#121212] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-green-500/30 transition-all">
+                            <div
+                                class="absolute top-0 right-0 w-24 h-24 bg-green-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="relative z-10">
+                                <div class="text-gray-400 text-sm font-bold mb-2">حالة التوظيف المضمون</div>
+                                <div class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-gray-500" id="dash-status-dot"></span>
+                                    <span id="dash-status-text">غير مفعل</span>
+                                </div>
+                                <button onclick="app.navigate('job-guarantee')"
+                                    class="text-green-500 text-xs font-bold hover:underline">تفعيل الضمان</button>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-[#121212] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-amber-500/30 transition-all">
+                            <div
+                                class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="relative z-10">
+                                <div class="text-gray-400 text-sm font-bold mb-2">المقابلات المحجوزة</div>
+                                <div class="text-4xl font-black text-white mb-2" id="dash-interviews">0</div>
+                                <span class="text-gray-500 text-xs">خلال آخر 30 يوم</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sections -->
+                    <div class="grid lg:grid-cols-3 gap-8">
+                        <!-- My CVs -->
+                        <div class="lg:col-span-2 bg-[#121212] border border-white/5 rounded-3xl p-6 min-h-[300px]">
+                            <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2"><i
+                                    data-lucide="file-text" class="w-5 text-gray-500"></i> سيرتي الذاتية</h3>
+                            <div class="bg-white/5 rounded-2xl p-8 text-center" id="dash-cv-list">
+                                <!-- Empty State -->
+                                <div class="flex flex-col items-center justify-center py-8">
+                                    <div
+                                        class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-gray-600 mb-4">
+                                        <i data-lucide="file-plus" class="w-8 h-8"></i>
+                                    </div>
+                                    <h4 class="text-white font-bold mb-2">لا توجد سير ذاتية بعد</h4>
+                                    <p class="text-gray-400 text-sm mb-6">ابدأ بإنشاء سيرتك الذاتية الأولى الآن باستخدام
+                                        الذكاء الاصطناعي</p>
+                                    <button onclick="app.navigate('templates')"
+                                        class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all">إنشاء
+                                        سيرة ذاتية</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upgrade Widget -->
+                        <div
+                            class="bg-gradient-to-br from-indigo-900/20 to-[#121212] border border-indigo-500/20 rounded-3xl p-6 flex flex-col items-center text-center">
+                            <div
+                                class="w-full h-32 bg-indigo-500/10 rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/50 to-transparent"></div>
+                                <i data-lucide="rocket" class="w-12 h-12 text-indigo-400 relative z-10"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">رقِ حسابك الآن</h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed">احصل على قوالب غير محدودة، خدمة
+                                التوظيف المضمون، وذكاء اصطناعي متطور.</p>
+                            <button onclick="app.navigate('pricing')"
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/20">عرض
+                                الباقات</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-auth" class="view-section">
+            <div class="min-h-screen bg-dark flex items-center justify-center p-4 relative overflow-hidden">
+                <!-- Background Elements -->
+                <div
+                    class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px]">
+                </div>
+                <div
+                    class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]">
+                </div>
+
+                <div
+                    class="bg-[#121212] border border-white/5 p-8 rounded-3xl text-center w-full max-w-md relative z-10 shadow-2xl">
+                    <div class="mb-8">
+                        <div class="inline-flex rounded-xl bg-white/5 p-1 mb-6">
+                            <button onclick="app.toggleAuthMode('login')" id="tab-login"
+                                class="px-6 py-2 rounded-lg text-sm font-bold bg-primary text-white transition-all shadow-lg">دخول</button>
+                            <button onclick="app.toggleAuthMode('register')" id="tab-register"
+                                class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">جديد</button>
+                        </div>
+                        <h2 id="auth-title" class="text-3xl font-black text-white mb-2">أهلاً بك مجدداً</h2>
+                        <p id="auth-desc" class="text-gray-400 text-sm">استكمل رحلة نجاحك المهني مع سكور</p>
+                    </div>
+
+                    <form id="auth-form" onsubmit="event.preventDefault(); app.handleAuth();" class="space-y-4">
+                        <div id="field-name" class="hidden text-right space-y-2">
+                            <label class="text-xs font-bold text-gray-400">الاسم الكامل</label>
+                            <input type="text" id="auth-name"
+                                class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-colors"
+                                placeholder="الاسم">
+                        </div>
+                        <div class="text-right space-y-2">
+                            <label class="text-xs font-bold text-gray-400">البريد الإلكتروني</label>
+                            <input type="email" id="auth-email" required
+                                class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-colors text-left"
+                                dir="ltr" placeholder="name@example.com">
+                        </div>
+                        <div class="text-right space-y-2">
+                            <label class="text-xs font-bold text-gray-400">كلمة المرور</label>
+                            <input type="password" id="auth-pass" required
+                                class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-colors text-left"
+                                dir="ltr" placeholder="••••••••">
+                        </div>
+                        <button type="submit" id="auth-submit"
+                            class="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-dark hover:to-indigo-800 text-white p-4 rounded-xl font-bold shadow-lg shadow-primary/25 transition-all transform active:scale-95 mt-4">
+                            تسجيل الدخول
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: JOB GUARANTEE -->
+        <section id="view-job-guarantee" class="view-section">
+            <div
+                class="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-amber-500 selection:text-black">
+
+                <!-- Ambient -->
+                <div class="fixed inset-0 pointer-events-none">
+                    <div
+                        class="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[120px]">
+                    </div>
+                </div>
+
+                <!-- Hero -->
+                <div class="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
+                    <div class="container mx-auto px-4 relative z-10 text-center">
+                        <div
+                            class="inline-flex items-center gap-2 bg-[#1A1A1A] border border-amber-500/30 text-amber-400 px-5 py-2 rounded-full text-sm font-bold mb-8 shadow-[0_0_30px_rgba(245,158,11,0.15)] backdrop-blur-md">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            <span>الضمان الذهبي: وظيفة أو استرداد أموالك</span>
+                        </div>
+
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tight">
+                            لا تبحث عن وظيفة... <br />
+                            <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-500 to-amber-600 drop-shadow-2xl">دع
+                                الوظيفة تجدك</span>
+                        </h1>
+
+                        <p class="text-gray-400 text-lg md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+                            نحن لا نساعدك في التقديم فحسب، بل نقوم بالمهمة نيابة عنك.
+                            <strong class="text-white font-bold block mt-2">نضمن لك 3 مقابلات عمل خلال 30 يوماً، أو
+                                تسترد الـ 199 ريال كاملة.</strong>
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <a href="https://wa.me/966540673935?text=أرغب%20في%20الاشتراك%20في%20باقة%20التوظيف%20المضمونة%20من%20Score%20CV"
+                                target="_blank" class="w-full sm:w-auto">
+                                <button
+                                    class="w-full px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black text-xl rounded-2xl shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center gap-3 hover:scale-105 active:scale-95">
+                                    اشترك بـ 199 ريال <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison -->
+                <div class="py-24 bg-white/5 border-t border-white/5">
+                    <div class="container mx-auto px-4 max-w-6xl">
+                        <div class="text-center mb-16">
+                            <h2 class="text-3xl font-bold text-white mb-4">لماذا تفشل الطرق التقليدية؟</h2>
+                            <p class="text-gray-400 text-lg">الفرق بين معاناتك الحالية وبين ما نقدمه لك</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+                            <!-- Problem -->
+                            <div
+                                class="bg-[#121212] rounded-3xl p-8 border border-white/5 hover:border-red-500/30 transition-colors">
+                                <h3 class="text-2xl font-bold text-gray-300 mb-8 flex items-center gap-3">
+                                    <span class="bg-red-500/10 p-2 rounded-lg"><i data-lucide="x"
+                                            class="text-red-500 w-6 h-6"></i></span>
+                                    الطريقة التقليدية
+                                </h3>
+                                <ul class="space-y-6">
+                                    <li class="flex gap-4 text-gray-400"><i data-lucide="x"
+                                            class="text-red-900 w-6 h-6 shrink-0 mt-1"></i>
+                                        <div><strong class="block text-gray-300 mb-1">التقديم اليدوي
+                                                المرهق</strong>تعبئة نفس البيانات مئات المرات.</div>
+                                    </li>
+                                    <li class="flex gap-4 text-gray-400"><i data-lucide="x"
+                                            class="text-red-900 w-6 h-6 shrink-0 mt-1"></i>
+                                        <div><strong class="block text-gray-300 mb-1">الرفض الآلي (ATS)</strong>75% ترفض
+                                            قبل أن يراها بشر.</div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Solution -->
+                            <div
+                                class="bg-gradient-to-br from-amber-900/10 to-[#121212] rounded-3xl p-8 border border-amber-500/30 transform md:scale-105 shadow-[0_0_50px_-10px_rgba(245,158,11,0.15)] relative">
+                                <div
+                                    class="absolute top-0 right-0 bg-amber-500 text-black text-xs font-bold px-4 py-1 rounded-bl-xl">
+                                    VIP</div>
+                                <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                                    <span class="bg-amber-500/20 p-2 rounded-lg"><i data-lucide="check"
+                                            class="text-amber-500 w-6 h-6"></i></span>
+                                    مع خدمة سكور
+                                </h3>
+                                <ul class="space-y-6">
+                                    <li class="flex gap-4 text-white"><i data-lucide="check"
+                                            class="text-green-500 w-6 h-6 shrink-0 mt-1"></i>
+                                        <div><strong class="block text-white mb-1">أتمتة كاملة</strong>نرسل سيرتك لـ
+                                            100+ شركة أسبوعياً.</div>
+                                    </li>
+                                    <li class="flex gap-4 text-white"><i data-lucide="check"
+                                            class="text-green-500 w-6 h-6 shrink-0 mt-1"></i>
+                                        <div><strong class="block text-white mb-1">وصول مباشر</strong>رسالتك تصل للـ
+                                            Inbox مباشرة.</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Steps -->
+                <div class="py-24 container mx-auto px-4">
+                    <h2 class="text-4xl font-black text-center mb-20 text-white">رحلتك في 4 خطوات</h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div
+                            class="bg-[#151515] p-8 rounded-3xl border border-white/5 hover:border-amber-500/50 transition-all group hover:-translate-y-2">
+                            <div class="text-4xl font-black text-white/5 mb-4 group-hover:text-amber-500/20">01</div>
+                            <div
+                                class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-amber-500 mb-6 group-hover:bg-amber-500 group-hover:text-black transition-all">
+                                <i data-lucide="zap"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">التحليل والتجهيز</h3>
+                            <p class="text-gray-400 text-sm">يحلل خبراؤنا سيرتك ويعيدون صياغتها.</p>
+                        </div>
+                        <div
+                            class="bg-[#151515] p-8 rounded-3xl border border-white/5 hover:border-amber-500/50 transition-all group hover:-translate-y-2">
+                            <div class="text-4xl font-black text-white/5 mb-4 group-hover:text-amber-500/20">02</div>
+                            <div
+                                class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-amber-500 mb-6 group-hover:bg-amber-500 group-hover:text-black transition-all">
+                                <i data-lucide="target"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">الاستهداف</h3>
+                            <p class="text-gray-400 text-sm">نحدد الشركات التي تبحث عن تخصصك.</p>
+                        </div>
+                        <div
+                            class="bg-[#151515] p-8 rounded-3xl border border-white/5 hover:border-amber-500/50 transition-all group hover:-translate-y-2">
+                            <div class="text-4xl font-black text-white/5 mb-4 group-hover:text-amber-500/20">03</div>
+                            <div
+                                class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-amber-500 mb-6 group-hover:bg-amber-500 group-hover:text-black transition-all">
+                                <i data-lucide="send"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">النشر</h3>
+                            <p class="text-gray-400 text-sm">إرسال مباشر لمدراء التوظيف.</p>
+                        </div>
+                        <div
+                            class="bg-[#151515] p-8 rounded-3xl border border-white/5 hover:border-amber-500/50 transition-all group hover:-translate-y-2">
+                            <div class="text-4xl font-black text-white/5 mb-4 group-hover:text-amber-500/20">04</div>
+                            <div
+                                class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-amber-500 mb-6 group-hover:bg-amber-500 group-hover:text-black transition-all">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">المقابلات</h3>
+                            <p class="text-gray-400 text-sm">تستقبل اتصالات للمقابلات.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guarantee Seal -->
+                <div class="py-20 bg-amber-500 relative overflow-hidden">
+                    <div
+                        class="container mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-right">
+                        <div class="flex-1">
+                            <h2 class="text-4xl md:text-5xl font-black text-black mb-6">ضمان استرجاع الأموال 100%</h2>
+                            <p class="text-black/80 text-xl font-medium leading-relaxed max-w-2xl">
+                                إذا لم تحصل على أي تفاعل وظيفي خلال 30 يوماً، سنعيد لك مبلغ 199 ريال فوراً.
+                            </p>
+                        </div>
+                        <div class="shrink-0">
+                            <div
+                                class="w-64 h-64 border-8 border-black rounded-full flex items-center justify-center bg-white rotate-12 shadow-2xl">
+                                <div class="text-center text-black">
+                                    <div class="text-6xl font-black leading-none">30</div>
+                                    <div class="text-xl font-bold uppercase">يوم</div>
+                                    <div class="text-sm font-bold text-amber-600 mt-2">ضمان ذهبي</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="py-20 bg-white/5">
+                    <div class="container mx-auto px-4 max-w-3xl">
+                        <h2 class="text-3xl font-bold text-center mb-10 text-white">الأسئلة الشائعة</h2>
+                        <div class="space-y-4">
+                            <div class="bg-black/40 rounded-2xl border border-white/5 overflow-hidden">
+                                <button onclick="app.guarantee.toggleFaq(this)"
+                                    class="w-full flex items-center justify-between p-6 text-right font-bold hover:bg-white/5 transition-colors text-lg text-white">
+                                    <span>كيف تضمنون استرداد المبلغ؟</span>
+                                    <i data-lucide="chevron-down"
+                                        class="text-amber-500 transition-transform duration-300"></i>
+                                </button>
+                                <div
+                                    class="hidden p-6 pt-0 text-gray-400 leading-relaxed border-t border-white/5 text-base">
+                                    يتم تفعيل عداد 30 يوماً في لوحة التحكم. إذا انتهت المدة دون نتائج، يظهر زر استرداد
+                                    المبلغ وتسترجع أموالك فوراً.
+                                </div>
+                            </div>
+                            <div class="bg-black/40 rounded-2xl border border-white/5 overflow-hidden">
+                                <button onclick="app.guarantee.toggleFaq(this)"
+                                    class="w-full flex items-center justify-between p-6 text-right font-bold hover:bg-white/5 transition-colors text-lg text-white">
+                                    <span>هل الخدمة تشمل جميع التخصصات؟</span>
+                                    <i data-lucide="chevron-down"
+                                        class="text-amber-500 transition-transform duration-300"></i>
+                                </button>
+                                <div
+                                    class="hidden p-6 pt-0 text-gray-400 leading-relaxed border-t border-white/5 text-base">
+                                    نعم، نستهدف الشركات بناءً على مسماك الوظيفي (هندسة، إدارة، برمجة، محاسبة، حديثي
+                                    تخرج) في القطاع الخاص وشبه الحكومي.
+                                </div>
+                            </div>
+                            <div class="bg-black/40 rounded-2xl border border-white/5 overflow-hidden">
+                                <button onclick="app.guarantee.toggleFaq(this)"
+                                    class="w-full flex items-center justify-between p-6 text-right font-bold hover:bg-white/5 transition-colors text-lg text-white">
+                                    <span>كيف تصل سيرتي للشركات؟</span>
+                                    <i data-lucide="chevron-down"
+                                        class="text-amber-500 transition-transform duration-300"></i>
+                                </button>
+                                <div
+                                    class="hidden p-6 pt-0 text-gray-400 leading-relaxed border-t border-white/5 text-base">
+                                    نستخدم تقنية Direct Inboxing لإرسال سيرتك وكأنها رسالة شخصية منك لبريد مدير التوظيف،
+                                    مما يضمن نسبة فتح عالية جداً.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- AI GENERATOR VIEW -->
+    <section id="view-ai-generate" class="view-section hidden">
+        <div class="min-h-screen bg-dark pt-28 px-4 pb-20 flex flex-col items-center justify-center">
+            <div class="container mx-auto max-w-4xl text-center">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold text-sm mb-8 animate-fade-in">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>الذكاء الاصطناعي</span>
+                </div>
+
+                <h1 class="text-5xl md:text-6xl font-black text-white mb-6 leading-tight animate-slide-up">
+                    دع الذكاء الاصطناعي <br />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">يكتب
+                        سيرتك الذاتية</span>
+                </h1>
+
+                <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up"
+                    style="animation-delay: 0.1s">
+                    فقط أخبرنا عن نفسك، خبراتك، أو الصق رابط حسابك في LinkedIn، ودع خوارزمياتنا المتطورة تصيغ لك سيرة
+                    ذاتية احترافية في ثوانٍ.
+                </p>
+
+                <!-- Chat Interface -->
+                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden shadow-2xl animate-scale-up"
+                    style="animation-delay: 0.2s">
+                    <!-- Chat History -->
+                    <div id="ai-chat-history" class="h-80 overflow-y-auto p-6 space-y-4 text-right scrollbar-hide">
+                        <!-- Initial Message -->
+                        <div class="flex gap-4 flex-row-reverse">
+                            <div
+                                class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shrink-0">
+                                <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 rounded-tr-none max-w-[80%] text-gray-300">
+                                أهلاً بك! أنا مساعدك الذكي. <br />
+                                أخبرني عن اسمك، مسماك الوظيفي، وخبراتك السابقة، وسأقوم بإنشاء سيرة ذاتية كاملة لك الآن.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="p-4 border-t border-white/5 bg-black/20">
+                        <div class="relative">
+                            <textarea id="ai-input-text"
+                                class="w-full bg-[#0a0a0a] text-white rounded-xl p-4 pr-12 pl-4 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none h-14"
+                                placeholder="اكتب نبذة عنك هنا..."
+                                onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); app.ai.generateFullCV(); }"></textarea>
+                            <button onclick="app.ai.generateFullCV()"
+                                class="absolute left-2 top-2 bottom-2 bg-purple-600 hover:bg-purple-700 text-white px-4 rounded-lg flex items-center gap-2 transition-colors">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- AI RESULT VIEW -->
+    <section id="view-ai-result" class="view-section hidden">
+        <div class="min-h-screen bg-gray-100 pt-28 px-4 pb-20">
+            <div class="container mx-auto max-w-6xl">
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">سيرتك الذاتية جاهزة!</h1>
+                    <div class="flex gap-4">
+                        <button onclick="app.navigate('builder')"
+                            class="bg-purple-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-purple-700 transition-colors flex items-center gap-2">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            تعديل وتحميل
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-200">
+                    <div id="ai-result-preview-container" class="min-h-[800px] origin-top scale-95">
+                        <!-- CV Preview will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-pricing" class="view-section">
+        <div class="min-h-screen bg-dark pt-28 px-4 pb-20">
+            <div class="container mx-auto max-w-6xl text-center">
+                <h1 class="text-4xl font-black text-white mb-4">باقات سكور الاحترافية</h1>
+                <p class="text-gray-400 text-lg mb-12">استثمر في مستقبلك مع أدواتنا المتقدمة وضمان التوظيف</p>
+
+                <div class="grid md:grid-cols-3 gap-8 items-start">
+
+                    <!-- BASIC (49 SAR) -->
+                    <div
+                        class="bg-[#121212] border border-white/5 rounded-3xl p-8 hover:border-gray-600 transition-all text-right">
+                        <h3 class="text-2xl font-bold text-white mb-2">الأساسية</h3>
+                        <div class="text-4xl font-black text-white mb-6">49 <span
+                                class="text-base text-gray-500 font-medium">ريال</span></div>
+                        <p class="text-gray-400 text-sm mb-6 pb-6 border-b border-white/5">للباحثين عن بداية قوية بتكلفة
+                            معقولة.</p>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-primary w-4"></i> تحميل بصيغة PDF عالية الجودة</li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-primary w-4"></i> قالب ATS احترافي واحد</li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-primary w-4"></i> بدون علامة مائية</li>
+                        </ul>
+                        <button onclick="app.navigate('auth')"
+                            class="w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-all">اختر
+                            الباقة</button>
+                    </div>
+
+                    <!-- PRO (69 SAR) -->
+                    <div
+                        class="bg-gradient-to-br from-[#1a1500] to-[#121212] border border-gold/30 rounded-3xl p-8 relative transform md:-translate-y-4 text-right shadow-[0_0_40px_rgba(245,158,11,0.1)]">
+                        <div
+                            class="absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2 bg-gold text-black text-xs font-bold px-4 py-1 rounded-full uppercase tracking-widest">
+                            الأكثر طلباً</div>
+                        <h3 class="text-2xl font-bold text-white mb-2 text-gold">المحترف Pro</h3>
+                        <div class="text-4xl font-black text-white mb-6">69 <span
+                                class="text-base text-gray-500 font-medium">ريال</span></div>
+                        <p class="text-amber-500/80 text-sm mb-6 pb-6 border-b border-white/5">مدعومة بذكاء اصطناعي
+                            Google Gemini 2.0</p>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check" class="text-gold w-4"></i>
+                                <strong>كل مميزات الأساسية</strong>
+                            </li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check" class="text-gold w-4"></i>
+                                كتابة المحتوى بالذكاء الاصطناعي</li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check" class="text-gold w-4"></i>
+                                جميع القوالب الاحترافية</li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check" class="text-gold w-4"></i>
+                                ترجمة فورية للسيرة</li>
+                        </ul>
+                        <button onclick="app.navigate('auth')"
+                            class="w-full py-4 bg-gold hover:bg-yellow-500 text-black rounded-xl font-black transition-all shadow-lg shadow-gold/20">ترقية
+                            الحساب</button>
+                    </div>
+
+                    <!-- ELITE (149 SAR) -->
+                    <div
+                        class="bg-gradient-to-br from-indigo-900/10 to-[#121212] border border-indigo-500/30 rounded-3xl p-8 text-right relative overflow-hidden group">
+                        <div
+                            class="absolute -top-10 -left-10 w-40 h-40 bg-indigo-600/20 rounded-full blur-[50px] group-hover:bg-indigo-600/30 transition-all">
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2 text-indigo-400">التوظيف المضمون</h3>
+                        <div class="text-4xl font-black text-white mb-6">149 <span
+                                class="text-base text-gray-500 font-medium">ريال</span></div>
+                        <p class="text-indigo-300/80 text-sm mb-6 pb-6 border-b border-white/5">نحن نقدم لك الوظائف
+                            بدلاً عنك.</p>
+                        <ul class="space-y-4 mb-8 relative z-10">
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-indigo-400 w-4"></i> <strong>كل مميزات Pro</strong></li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-indigo-400 w-4"></i> التقديم الآلي على 50+ وظيفة أسبوعياً</li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-indigo-400 w-4"></i> ضمان 3 مقابلات عمل أو استرداد المبلغ</li>
+                            <li class="flex gap-2 text-white text-sm"><i data-lucide="check"
+                                    class="text-indigo-400 w-4"></i> تقارير أسبوعية تفصيلية</li>
+                        </ul>
+                        <button onclick="app.navigate('auth')"
+                            class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/25 relative z-10">اشترك
+                            في الضمان</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- PAGE: AI RESULT (Dedicated View) -->
+    <section id="view-ai-result" class="view-section">
+        <div class="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center p-4 relative">
+            <div class="absolute top-6 right-6 z-50">
+                <button onclick="app.builder.setMode('edit'); app.navigate('builder'); app.builder.loadFromState();"
+                    class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-bold backdrop-blur-md transition-all flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i> تعديل يدوي
+                </button>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-2">سيرتك جاهزة!</h2>
+                <p class="text-green-400">تم إنشاء السيرة المطابقة لنظام ATS بنجاح</p>
+            </div>
+
+            <!-- Preview Container -->
+            <div class="w-full max-w-4xl h-[70vh] bg-white rounded shadow-2xl overflow-hidden mb-8 relative">
+                <div id="ai-result-preview-container" class="w-full h-full overflow-y-auto custom-scrollbar">
+                    <!-- HTML Injected Here -->
+                </div>
+            </div>
+
+            <button onclick="alert('تم تحميل السيرة الذاتية بنجاح!')"
+                class="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2 text-lg animate-bounce">
+                <i data-lucide="download" class="w-6 h-6"></i> تحميل الان (PDF)
+            </button>
+        </div>
+    </section>
+
+    <section id="view-admin" class="view-section">
+        <div class="min-h-screen bg-dark pt-28 px-4 pb-20 relative overflow-hidden">
+            <!-- Background Effects -->
+            <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div
+                    class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[100px] animate-pulse">
+                </div>
+                <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[100px] animate-pulse"
+                    style="animation-delay: 2s;"></div>
+            </div>
+
+            <div class="container mx-auto max-w-4xl relative z-10">
+                <div class="text-center mb-12">
+                    <span
+                        class="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 inline-block">تحديث
+                        جديد</span>
+                    <h1 class="text-4xl md:text-5xl font-black text-white mb-2">مستشارك الذكي</h1>
+                    <p class="text-gray-400">تحدث معي، وسأبني لك سيرة ذاتية احترافية في ثوانٍ.</p>
+                </div>
+
+                <div
+                    class="bg-[#121212] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[500px]">
+                    <!-- Chat Windows -->
+                    <div class="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar bg-black/50" id="ai-chat-history">
+                        <!-- AI Message -->
+                        <div class="flex gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shrink-0">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div class="bg-white/10 rounded-2xl p-4 rounded-tl-none max-w-[80%]">
+                                <p class="text-gray-200">أهلاً بك! أنا مستشارك الذكي. أخبرني قليلاً عن نفسك (وظيفتك
+                                    الحالية، عدد سنوات الخبرة، وأهم مهاراتك) وسأقوم بكتابة سيرة ذاتية كاملة لك.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Typing Area -->
+                    <div class="p-4 bg-white/5 border-t border-white/5">
+                        <div class="relative">
+                            <textarea id="ai-input-text"
+                                class="w-full bg-black border border-white/10 rounded-2xl pl-4 pr-16 py-4 text-white focus:border-purple-500 outline-none resize-none h-16 scrollbar-hide"
+                                placeholder="اكتب هنا... (مثال: أنا مدير مبيعات خبرة 5 سنوات...)"></textarea>
+
+                            <button onclick="app.ai.generateFullCV()"
+                                class="absolute top-1/2 -translate-y-1/2 left-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-2 rounded-xl hover:scale-105 transition-all shadow-lg shadow-purple-500/20">
+                                <i data-lucide="send-horizontal" class="w-5 h-5 rtl:rotate-180"></i>
+                            </button>
+                        </div>
+                        <div class="text-center mt-2 text-xs text-gray-600">
+                            مدعوم بواسطة Google Gemini 1.5 Pro
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Overlay for AI -->
+    <div id="ai-full-loading"
+        class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center text-center">
+        <div class="w-24 h-24 mb-8 relative">
+            <div class="absolute inset-0 border-4 border-purple-500/30 rounded-full animate-ping"></div>
+            <div class="absolute inset-0 border-4 border-t-purple-500 rounded-full animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i data-lucide="brain-circuit" class="w-10 h-10 text-purple-400"></i>
+            </div>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-2">جاري تحليل بياناتك...</h2>
+        <p id="ai-loading-text" class="text-gray-400 text-lg">نكتب النبذة التعريفية...</p>
+    </div>
+
+    <section id="view-admin" class="view-section">
+        <div class="min-h-screen bg-dark pt-28 px-4 pb-20">
+            <div class="container mx-auto max-w-6xl">
+                <h1 class="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">لوحة تحكم المشرف (Admin)
+                </h1>
+                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-white/5 text-gray-400 font-bold text-sm">
+                                <tr>
+                                    <th class="p-4">العميل</th>
+                                    <th class="p-4">البريد</th>
+                                    <th class="p-4">الباقة</th>
+                                    <th class="p-4">المقابلات</th>
+                                    <th class="p-4">تعديل الباقة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-list">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OFFER MODAL -->
+    <div id="offer-modal"
+        class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+        <div
+            class="bg-gradient-to-br from-[#1a1500] to-[#0a0a0a] border border-gold/30 w-full max-w-lg rounded-3xl p-1 relative overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.2)]">
+            <div class="bg-[#0f0f0f] rounded-[22px] p-8 relative z-10">
+                <button onclick="document.getElementById('offer-modal').classList.add('hidden')"
+                    class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+                <div class="text-center mb-6">
+                    <div
+                        class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gold/10 text-gold mb-4 border border-gold/20 animate-pulse">
+                        <i data-lucide="rocket" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-3xl font-black text-white mb-2">ترقية الحساب</h2>
+                    <p class="text-gray-400">لتحميل هذا القالب بصيغة PDF عالية الجودة.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="alert('تم تحويلك لبوابة الدفع')"
+                        class="flex-1 bg-gold hover:bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg shadow-gold/20">شراء
+                        القالب (29 ريال)</button>
+                    <button onclick="document.getElementById('offer-modal').classList.add('hidden')"
+                        class="px-4 text-gray-500 hover:text-white">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ATS Modal -->
+    <div id="ats-modal"
+        class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-[#151515] border border-white/10 rounded-3xl w-full max-w-md p-8 relative animate-fade-up">
+            <button onclick="document.getElementById('ats-modal').classList.add('hidden')"
+                class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <div class="text-center mb-6">
+                <div
+                    class="w-24 h-24 rounded-full border-[6px] border-green-500 flex items-center justify-center text-4xl font-black text-green-500 mx-auto mb-4 bg-green-500/10 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+                    92%</div>
+                <h2 class="text-2xl font-bold text-white">متوافق تماماً!</h2>
+                <p class="text-gray-400 text-sm">هذا القالب مصمم ليعبر أنظمة الفرز بنجاح.</p>
+            </div>
+            <button onclick="document.getElementById('ats-modal').classList.add('hidden')"
+                class="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200">فهمت</button>
+        </div>
+    </div>
+
+    <!-- AI Writer Loading -->
+    <div id="ai-loading" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center">
+        <div class="text-center">
+            <div class="loader mx-auto mb-4"></div>
+            <h2 class="text-xl font-bold text-white animate-pulse">الذكاء الاصطناعي يكتب الآن...</h2>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        window.app = {
+            state: {
+                lang: 'ar',
+                template: 'classic',
+
+                data: {
+                    name: "",
+                    title: "",
+                    email: "",
+                    phone: "",
+                    summary: "",
+                    exp: { role: "", comp: "", date: "", desc: "" },
+                    edu: { deg: "", uni: "", year: "" },
+                    skills: ""
+                }
+            },
+
+            toggleAuthMode: function (mode) {
+                const isLogin = mode === 'login';
+                document.getElementById('tab-login').className = isLogin ? 'px-6 py-2 rounded-lg text-sm font-bold bg-primary text-white transition-all shadow-lg' : 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                document.getElementById('tab-register').className = !isLogin ? 'px-6 py-2 rounded-lg text-sm font-bold bg-primary text-white transition-all shadow-lg' : 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+
+                document.getElementById('auth-title').textContent = isLogin ? 'أهلاً بك مجدداً' : 'إنشاء حساب جديد';
+                document.getElementById('auth-desc').textContent = isLogin ? 'استكمل رحلة نجاحك المهني مع سكور' : 'ابدأ رحلتك المهنية الاحترافية اليوم';
+                document.getElementById('auth-submit').textContent = isLogin ? 'تسجيل الدخول' : 'انضم إلينا';
+
+                const nameField = document.getElementById('field-name');
+                if (!isLogin) {
+                    nameField.classList.remove('hidden');
+                    nameField.classList.add('animate-fade-in');
+                    document.getElementById('auth-name').required = true;
+                } else {
+                    nameField.classList.add('hidden');
+                    document.getElementById('auth-name').required = false;
+                }
+            },
+
+            handleAuth: function () {
+                const isLogin = document.getElementById('auth-submit').textContent.includes('دخول');
+                const email = document.getElementById('auth-email').value;
+                const pass = document.getElementById('auth-pass').value;
+
+                if (isLogin) {
+                    app.auth.login(email, pass);
+                } else {
+                    const name = document.getElementById('auth-name').value;
+                    app.auth.register(name, email, pass);
+                }
+            },
+
+            navigate: function (pageId) {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                const target = document.getElementById('view-' + pageId);
+                if (target) {
+                    target.classList.add('active');
+                    window.scrollTo(0, 0);
+                    if (pageId === 'templates') this.renderTemplatesPage();
+                    if (pageId === 'dashboard') this.renderDashboard();
+                    if (pageId === 'pricing') this.renderPricing();
+                    if (pageId === 'admin') this.renderAdmin();
+                    if (pageId === 'ai-generate') window.scrollTo(0, 0); // Static view, just scroll
+
+                    // Refresh Icons when view changes
+                    if (typeof lucide !== 'undefined') {
+                        setTimeout(() => lucide.createIcons(), 100);
+                    }
+                }
+            },
+
+            showAiResult: function () {
+                this.navigate('ai-result');
+                const container = document.getElementById('ai-result-preview-container');
+                if (container) {
+                    container.innerHTML = this.builder.renderCV(app.state.data, 'classic');
+                }
+            },
+
+            renderDashboard: function () {
+                if (!this.auth.user) {
+                    this.navigate('auth');
+                    return;
+                }
+                const user = this.auth.user;
+
+                // Update Stats
+                document.getElementById('dash-plan').textContent = user.plan === 'elite' ? 'Elite' : (user.plan === 'pro' ? 'Pro' : 'Free');
+                document.getElementById('dash-cvs').textContent = user.active_cvs;
+                document.getElementById('dash-interviews').textContent = user.interviews;
+
+                // Job Guarantee Status
+                const statusText = document.getElementById('dash-status-text');
+                const statusDot = document.getElementById('dash-status-dot');
+
+                if (user.plan === 'elite') {
+                    statusText.textContent = "نشط - جاري البحث";
+                    statusText.classList.add('text-green-400');
+                    statusDot.classList.replace('bg-gray-500', 'bg-green-500');
+                    statusDot.classList.add('animate-pulse');
+                } else {
+                    statusText.textContent = "غير مفعل";
+                    statusText.classList.remove('text-green-400');
+                    statusDot.classList.replace('bg-green-500', 'bg-gray-500');
+                    statusDot.classList.remove('animate-pulse');
+                }
+            },
+
+            renderPricing: function () {
+                const container = document.getElementById('pricing-grid');
+                if (container) {
+                    // Already present in static HTML, or dynamic rendering here
+                }
+            },
+
+            renderAdmin: function () {
+                if (!this.auth.user || this.auth.user.role !== 'admin') {
+                    this.navigate('auth');
+                    return;
+                }
+
+                const db = JSON.parse(localStorage.getItem('score_db') || '{}');
+                const usersList = document.getElementById('admin-users-list');
+                if (usersList) {
+                    usersList.innerHTML = Object.values(db).map((u, i) => `
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                        <td class="p-4 text-white">${u.name}</td>
+                        <td class="p-4 text-gray-400 text-sm">${u.email}</td>
+                        <td class="p-4"><span class="bg-gray-800 text-white px-2 py-1 rounded text-xs">${u.plan}</span></td>
+                        <td class="p-4">
+                            <input type="number" value="${u.interviews || 0}" class="bg-black border border-white/20 rounded w-16 px-2 py-1 text-white" onchange="app.adminUpdate('${u.email}', 'interviews', this.value)">
+                        </td>
+                        <td class="p-4">
+                            <select class="bg-black border border-white/20 rounded px-2 py-1 text-white text-xs" onchange="app.adminUpdate('${u.email}', 'plan', this.value)">
+                                <option value="free" ${u.plan === 'free' ? 'selected' : ''}>Free</option>
+                                <option value="pro" ${u.plan === 'pro' ? 'selected' : ''}>Pro</option>
+                                <option value="elite" ${u.plan === 'elite' ? 'selected' : ''}>Elite (M)</option>
+                            </select>
+                        </td>
+                    </tr>
+                 `).join('');
+                }
+            },
+
+            adminUpdate: function (email, field, value) {
+                const db = JSON.parse(localStorage.getItem('score_db') || '{}');
+                if (db[email]) {
+                    db[email][field] = value;
+                    localStorage.setItem('score_db', JSON.stringify(db));
+                    alert('Updated ' + email + ': ' + field);
+                }
+            },
+
+            toggleMenu: function () {
+                const menu = document.getElementById('mobile-menu');
+                if (menu) menu.classList.toggle('hidden');
+            },
+
+            // --- Premium Template Data ---
+            templates: [
+                { id: 'classic', name: 'الاحترافي (ATS)', desc: 'الأفضل للشركات الحكومية والكبرى. متوافق 100%.', img: 'https://placehold.co/300x400/fff/000?text=Imperial+ATS', premium: false, price: 'مجاني' },
+                { id: 'minimal', name: 'البسيط (Minimal)', desc: 'تصميم نظيف وعصري، يركز على المحتوى.', img: 'https://placehold.co/300x400/f3f4f6/000?text=Minimal', premium: false, price: 'مجاني' },
+                { id: 'modern', name: 'أونيكس (Corporate)', desc: 'تصميم جانبي أنيق للقطاع الخاص والشركات العالمية.', img: 'https://placehold.co/300x400/1e293b/fff?text=Onyx+Pro', premium: true, price: '29 ر.س' },
+                { id: 'creative', name: 'كانفاس (Elite)', desc: 'للمبدعين، المصممين، والتسويق. تصميم جذاب ونظيف.', img: 'https://placehold.co/300x400/7c3aed/fff?text=Canvas+Elite', premium: true, price: '29 ر.س' },
+                { id: 'executive', name: 'المدير (Executive)', desc: 'للإداريين والقياديين. فخامة وهيبة.', img: 'https://placehold.co/300x400/000/fff?text=Executive', premium: true, price: '49 ر.س' }
+            ],
+
+            renderTemplatesPage: function () {
+                const grid = document.getElementById('templates-grid');
+                if (grid) {
+                    grid.innerHTML = this.templates.map(t => `
+                    <div class="break-inside-avoid mb-8 bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer group relative" onclick="app.builder.selectTemplate('${t.id}')">
+                        ${t.premium ? '<div class="absolute top-4 left-4 z-10 bg-gold text-black text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg"><i data-lucide="crown" class="w-3 h-3"></i> Premium</div>' : ''}
+                        <div class="h-64 bg-gray-800 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                <span class="text-white font-bold text-lg">${t.name}</span>
+                                <span class="bg-primary text-white px-6 py-2 rounded-full font-bold shadow-lg transform scale-90 group-hover:scale-100 transition-transform">استخدم القالب</span>
+                            </div>
+                            <img src="${t.img}" class="w-full h-full object-cover opacity-80 group-hover:opacity-40 transition-all" />
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-white">${t.name}</h3>
+                                <span class="text-gold font-bold">${t.price}</span>
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">${t.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+            },
+
+            guarantee: {
+                toggleFaq: function (btn) {
+                    const answer = btn.nextElementSibling;
+                    const icon = btn.querySelector('[data-lucide="chevron-down"]');
+                    if (answer.classList.contains('hidden')) {
+                        answer.classList.remove('hidden');
+                        if (icon) icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        answer.classList.add('hidden');
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            },
+
+            ai: {
+                generateFullCV: async function () {
+                    const inputElement = document.getElementById('ai-input-text');
+                    const text = inputElement.value;
+                    const chatHistory = document.getElementById('ai-chat-history');
+
+                    if (!text || text.length < 5) return;
+
+                    // 1. Add User Message
+                    chatHistory.innerHTML += `
+                        <div class="flex gap-4 flex-row-reverse animate-fade-in">
+                            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                <i data-lucide="user" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div class="bg-primary rounded-2xl p-4 rounded-tr-none max-w-[80%]">
+                                <p class="text-white">${text}</p>
+                            </div>
+                        </div>
+                    `;
+                    inputElement.value = '';
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                    // 2. Add AI Loading Message
+                    const loadingId = 'ai-msg-' + Date.now();
+                    chatHistory.innerHTML += `
+                        <div class="flex gap-4 animate-fade-in" id="${loadingId}">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shrink-0 animate-pulse">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div class="bg-white/10 rounded-2xl p-4 rounded-tl-none max-w-[80%] flex items-center gap-2">
+                                <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                                <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                                <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+                    `;
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                    try {
+                        // Extract Name from Text (Better Regex)
+                        const nameMatch = text.match(/(?:أنا|اسم|Called|Name is|I am)\s+([^\s\n]+(?:\s+[^\s\n]+)?)/i);
+                        const userDetectedName = nameMatch ? nameMatch[1] : (text.split(' ').slice(0, 2).join(' '));
+
+                        // Simulate API call
+                        const response = await new Promise(resolve => setTimeout(() => {
+                            resolve({
+                                name: userDetectedName,
+                                title: "مهندس برمجيات",
+                                email: "email@example.com",
+                                phone: "05xxxxxxxx",
+                                summary: text.substring(0, 150) + "...", // Use user text as base
+                                exp: {
+                                    role: "مهندس برمجيات",
+                                    comp: "شركة التقنية",
+                                    date: "2023 - الآن",
+                                    desc: text
+                                },
+                                edu: {
+                                    deg: "بكالوريوس",
+                                    uni: "جامعة الملك سعود",
+                                    year: "2023"
+                                },
+                                skills: "Communication, Leadership, Problem Solving"
+                            });
+                        }, 2000));
+
+                        const generatedData = response;
+
+                        // Remove Loading
+                        document.getElementById(loadingId).remove();
+
+                        // Navigate & Setup Result
+                        app.state.template = 'classic';
+                        // app.navigate('builder'); // OLD
+
+                        // NEW STRICT NAV
+                        app.showAiResult();
+
+                        // Update Builder State just in case they switch to edit later
+                        setTimeout(() => {
+                            app.builder.loadFromState();
+                        }, 100);
+
+                    } catch (e) {
+                        console.error("AI Generation Failed", e);
+                        document.getElementById(loadingId).innerHTML = `<p class="text-red-400">عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.</p>`;
+                    }
+                }
+            },
+
+            builder: {
+                step: 0,
+                mode: 'edit', // 'edit' or 'ai-result'
+
+                setMode: function (mode) {
+                    this.mode = mode;
+                    const sidebar = document.getElementById('builder-sidebar');
+                    const preview = document.getElementById('builder-preview');
+                    const downloadBtn = document.querySelector('#builder-preview button');
+
+                    if (mode === 'ai-result') {
+                        // Hide Sidebar, Expand Preview
+                        sidebar.classList.add('hidden');
+                        preview.classList.remove('md:flex');
+                        preview.classList.add('flex', 'w-full', 'h-screen', 'fixed', 'inset-0', 'z-50', 'bg-[#0A0A0A]');
+
+                        // Add "Back to Edit" button if not exists
+                        if (!document.getElementById('btn-back-edit')) {
+                            const btn = document.createElement('button');
+                            btn.id = 'btn-back-edit';
+                            btn.className = 'absolute top-6 right-6 bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-bold backdrop-blur-md transition-all z-50 flex items-center gap-2';
+                            btn.innerHTML = '<i data-lucide="edit-3" class="w-4 h-4"></i> تعديل يدوي';
+                            btn.onclick = () => app.builder.setMode('edit');
+                            preview.appendChild(btn);
+                        }
+
+                        // Style Download Button for Center Focus
+                        if (downloadBtn) {
+                            downloadBtn.classList.remove('top-6', 'left-6');
+                            downloadBtn.classList.add('bottom-10', 'left-1/2', '-translate-x-1/2', 'scale-125');
+                        }
+
+                    } else {
+                        // Restore Edit Mode
+                        sidebar.classList.remove('hidden');
+                        preview.classList.add('md:flex');
+                        preview.classList.remove('flex', 'w-full', 'h-screen', 'fixed', 'inset-0', 'z-50', 'bg-[#0A0A0A]');
+
+                        const backBtn = document.getElementById('btn-back-edit');
+                        if (backBtn) backBtn.remove();
+
+                        // Restore Download Button
+                        if (downloadBtn) {
+                            downloadBtn.classList.add('top-6', 'left-6');
+                            downloadBtn.classList.remove('bottom-10', 'left-1/2', '-translate-x-1/2', 'scale-125');
+                        }
+                    }
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                },
+
+                selectTemplate: function (id) {
+                    app.state.template = id;
+                    app.navigate('builder');
+                    this.setMode('edit'); // Reset to edit mode when manual select
+                    this.updatePreview();
+                },
+
+                setStep: function (n) {
+                    this.step = n;
+                    document.querySelectorAll('.step-btn').forEach((btn, idx) => {
+                        btn.classList.toggle('bg-primary', idx === n);
+                        btn.classList.toggle('text-white', idx === n);
+                        btn.classList.toggle('text-gray-400', idx !== n);
+                    });
+                    document.querySelectorAll('.step-content').forEach((el, idx) => {
+                        el.classList.toggle('hidden', idx !== n);
+                    });
+                },
+
+                setLanguage: function (lang) {
+                    app.state.lang = lang;
+                    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+                    this.updatePreview();
+                },
+
+                // NEW: Load State Data back into DOM Inputs (For AI & Editing)
+                loadFromState: function () {
+                    const data = app.state.data;
+                    const setVal = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (el && val) el.value = val;
+                    };
+
+                    setVal('inp-name', data.name);
+                    setVal('inp-title', data.title);
+                    setVal('inp-email', data.email);
+                    setVal('inp-phone', data.phone);
+                    setVal('inp-summary', data.summary);
+
+                    if (data.exp) {
+                        setVal('inp-exp-role', data.exp.role);
+                        setVal('inp-exp-comp', data.exp.comp);
+                        setVal('inp-exp-date', data.exp.date);
+                        setVal('inp-exp-desc', data.exp.desc);
+                    }
+
+                    if (data.edu) {
+                        setVal('inp-edu-deg', data.edu.deg);
+                        setVal('inp-edu-uni', data.edu.uni);
+                        setVal('inp-edu-year', data.edu.year);
+                    }
+
+                    setVal('inp-skills', data.skills);
+                },
+
+                updatePreview: function (dataOverride = null) {
+                    try {
+                        const getValue = (id) => document.getElementById(id) ? document.getElementById(id).value : '';
+
+                        if (dataOverride) {
+                            app.state.data = dataOverride;
+                            this.loadFromState();
+                        } else {
+                            app.state.data = {
+                                name: getValue('inp-name'), title: getValue('inp-title'), email: getValue('inp-email'), phone: getValue('inp-phone'),
+                                summary: getValue('inp-summary'),
+                                exp: { role: getValue('inp-exp-role'), comp: getValue('inp-exp-comp'), date: getValue('inp-exp-date'), desc: getValue('inp-exp-desc') },
+                                edu: { deg: getValue('inp-edu-deg'), uni: getValue('inp-edu-uni'), year: getValue('inp-edu-year') },
+                                skills: getValue('inp-skills')
+                            };
+                        }
+
+                        const container = document.getElementById('cv-preview');
+                        if (container) {
+                            container.innerHTML = this.renderCV(app.state.data, app.state.template);
+                        }
+                    } catch (e) {
+                        console.error("Update Preview Error", e);
+                    }
+                },
+
+                renderCV: function (data, template) {
+                    const isAr = app.state.lang === 'ar';
+                    const dir = isAr ? 'rtl' : 'ltr';
+                    const L = {
+                        summary: isAr ? 'الملخص المهني' : 'Professional Summary',
+                        exp: isAr ? 'الخبرات العملية' : 'Work Experience',
+                        edu: isAr ? 'التعليم' : 'Education',
+                        skills: isAr ? 'المهارات' : 'Skills',
+                        contact: isAr ? 'معلومات التواصل' : 'Contact Info'
+                    };
+
+                    let html = '';
+                    // --- 1. IMPERIAL ATS ---
+                    if (template === 'classic') {
+                        html = `
+                            <div class="h-full bg-white text-gray-900 p-12 ${isAr ? 'font-serif' : 'font-serif'}" dir="${dir}">
+                                <header class="border-b-2 border-gray-900 pb-6 mb-8 text-center">
+                                    <h1 class="text-4xl font-bold uppercase tracking-widest mb-3">${data.name || (isAr ? 'الاسم' : 'Your Name')}</h1>
+                                    <p class="text-xl font-medium mb-4 text-gray-700">${data.title || (isAr ? 'المسمى' : 'Job Title')}</p>
+                                    <div class="flex justify-center flex-wrap gap-4 text-sm font-medium text-gray-600">
+                                        <span>${data.email}</span> <span class="text-gray-300">|</span> <span>${data.phone}</span>
+                                    </div>
+                                </header>
+                                <section class="mb-8">
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-3 pb-1 tracking-wider">${L.summary}</h3>
+                                    <p class="text-sm leading-relaxed text-justify text-gray-800">${data.summary}</p>
+                                </section>
+                                <section class="mb-8">
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-4 pb-1 tracking-wider">${L.exp}</h3>
+                                    <div class="mb-5">
+                                        <div class="flex justify-between items-baseline mb-1">
+                                            <h4 class="font-bold text-base">${data.exp.role}</h4>
+                                            <span class="text-sm font-medium text-gray-600">${data.exp.date}</span>
+                                        </div>
+                                        <div class="text-sm font-bold italic text-gray-700 mb-2">${data.exp.comp}</div>
+                                        <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-line">${data.exp.desc}</p>
+                                    </div>
+                                </section>
+                                <section class="mb-8">
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-4 pb-1 tracking-wider">${L.edu}</h3>
+                                    <div class="flex justify-between items-baseline">
+                                        <div><span class="font-bold block">${data.edu.deg}</span><span class="text-sm text-gray-700">${data.edu.uni}</span></div>
+                                        <span class="text-sm font-medium text-gray-600">${data.edu.year}</span>
+                                    </div>
+                                </section>
+                                <section>
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-3 pb-1 tracking-wider">${L.skills}</h3>
+                                    <div class="text-sm text-gray-800 leading-7">${data.skills.split(',').join(' • ')}</div>
+                                </section>
+                            </div>`;
+                    }
+                    // --- 2. ONYX PRO ---
+                    else if (template === 'modern') {
+                        html = `
+                            <div class="h-full bg-white flex ${isAr ? 'font-sans' : 'font-english'}" dir="${dir}">
+                                <aside class="w-[32%] bg-slate-900 text-white p-8 pt-12 flex flex-col gap-8">
+                                    <div class="flex justify-center"><div class="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center text-3xl font-bold border-2 border-slate-700">${(data.name || 'A').charAt(0)}</div></div>
+                                    <div><h3 class="text-xs font-bold uppercase text-slate-400 border-b border-slate-700 pb-2 mb-3 tracking-widest">${L.contact}</h3><div class="text-xs space-y-3 font-light text-slate-300 break-all"><div class="flex items-center gap-2"><i data-lucide="mail" class="w-3"></i> ${data.email}</div><div class="flex items-center gap-2"><i data-lucide="phone" class="w-3"></i> ${data.phone}</div></div></div>
+                                    <div><h3 class="text-xs font-bold uppercase text-slate-400 border-b border-slate-700 pb-2 mb-3 tracking-widest">${L.edu}</h3><div class="text-sm font-bold text-white">${data.edu.deg}</div><div class="text-xs text-slate-400 mt-1">${data.edu.uni}</div><div class="text-xs text-slate-500 mt-1">${data.edu.year}</div></div>
+                                    <div><h3 class="text-xs font-bold uppercase text-slate-400 border-b border-slate-700 pb-2 mb-3 tracking-widest">${L.skills}</h3><div class="flex flex-wrap gap-2">${data.skills.split(',').map(s => `<span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-slate-300 border border-slate-700">${s.trim()}</span>`).join('')}</div></div>
+                                </aside>
+                                <main class="w-[68%] p-10 pt-12 text-slate-800">
+                                    <header class="mb-10 border-b-2 border-blue-600 pb-6"><h1 class="text-4xl font-black uppercase text-slate-900 mb-2 tracking-tight leading-none">${data.name}</h1><p class="text-xl text-blue-600 font-medium tracking-wide">${data.title}</p></header>
+                                    <section class="mb-10"><h3 class="font-bold text-slate-900 mb-3 uppercase text-sm tracking-wider flex items-center gap-2"><i data-lucide="user" class="w-4 text-blue-600"></i> ${L.summary}</h3><p class="text-sm text-slate-600 leading-relaxed text-justify">${data.summary}</p></section>
+                                    <section><h3 class="font-bold text-slate-900 mb-5 uppercase text-sm tracking-wider flex items-center gap-2"><i data-lucide="briefcase" class="w-4 text-blue-600"></i> ${L.exp}</h3><div class="relative border-l-2 border-slate-100 pl-4 ml-2"><div class="flex justify-between items-baseline mb-1"><h4 class="font-bold text-lg text-slate-800">${data.exp.role}</h4><span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">${data.exp.date}</span></div><div class="text-sm font-bold text-blue-600 mb-3">${data.exp.comp}</div><p class="text-sm text-slate-700 leading-relaxed">${data.exp.desc}</p></div></section>
+                                </main>
+                            </div>`;
+                    }
+                    // --- 3. CANVAS ELITE (Creative) ---
+                    else if (template === 'creative') {
+                        html = `
+                                        <div class="h-full bg-white text-gray-800 ${isAr ? 'font-sans' : 'font-english'}" dir="${dir}">
+                                            <div class="bg-[#7C3AED] text-white p-12 relative overflow-hidden">
+                                                <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/10 to-transparent"></div>
+                                                <h1 class="text-5xl font-black mb-3 relative z-10">${data.name}</h1>
+                                                <p class="text-xl font-medium opacity-90 relative z-10 tracking-wide">${data.title}</p>
+                                            </div>
+                                            <div class="p-12 grid grid-cols-12 gap-10">
+                                                <div class="col-span-8">
+                                                    <div class="mb-10">
+                                                        <h3 class="font-black text-xl mb-4 flex items-center gap-2 text-gray-900"><span class="w-8 h-1 bg-[#7C3AED]"></span> ${L.summary}</h3>
+                                                        <p class="text-sm leading-7 text-gray-600 text-justify">${data.summary}</p>
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="font-black text-xl mb-6 flex items-center gap-2 text-gray-900"><span class="w-8 h-1 bg-[#7C3AED]"></span> ${L.exp}</h3>
+                                                        <div class="group">
+                                                            <div class="flex justify-between items-center mb-2">
+                                                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-[#7C3AED] transition-colors">${data.exp.role}</h4>
+                                                                <span class="text-xs font-bold text-white bg-gray-900 px-2 py-1 rounded">${data.exp.date}</span>
+                                                            </div>
+                                                            <div class="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider">${data.exp.comp}</div>
+                                                            <p class="text-sm text-gray-600 leading-relaxed border-l-2 border-gray-100 pl-4">${data.exp.desc}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-span-4 space-y-8">
+                                                    <div class="bg-gray-50 p-6 rounded-2xl">
+                                                        <h3 class="font-bold mb-4 text-gray-900 border-b border-gray-200 pb-2">${L.contact}</h3>
+                                                        <div class="text-sm space-y-3 text-gray-600">
+                                                            <div class="truncate font-medium">${data.email}</div>
+                                                            <div class="font-medium">${data.phone}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="font-bold mb-4 text-gray-900 border-b border-gray-200 pb-2">${L.edu}</h3>
+                                                        <div class="text-sm">
+                                                            <div class="font-bold text-gray-900 text-base">${data.edu.deg}</div>
+                                                            <div class="text-[#7C3AED] font-medium mt-1">${data.edu.uni}</div>
+                                                            <div class="text-gray-400 text-xs mt-1 font-bold">${data.edu.year}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="font-bold mb-4 text-gray-900 border-b border-gray-200 pb-2">${L.skills}</h3>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            ${data.skills.split(',').map(s => `<span class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold text-gray-700 shadow-sm">${s.trim()}</span>`).join('')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                    }
+                    // --- 4. MINIMAL (Free) ---
+                    else if (template === 'minimal') {
+                        html = `
+                                        <div class="h-full bg-slate-50 text-slate-900 p-12 font-sans" dir="${dir}">
+                                            <header class="text-center border-b border-slate-300 pb-8 mb-8">
+                                                <h1 class="text-3xl font-light mb-2">${data.name}</h1>
+                                                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">${data.title}</p>
+                                                <div class="mt-4 text-sm text-slate-400 flex justify-center gap-4">
+                                                    <span>${data.email}</span><span>•</span><span>${data.phone}</span>
+                                                </div>
+                                            </header>
+                                            <div class="grid grid-cols-1 gap-8">
+                                                <section>
+                                                    <h3 class="font-bold text-sm uppercase tracking-widest text-slate-400 mb-4">${L.summary}</h3>
+                                                    <p class="text-sm leading-7 text-slate-700">${data.summary}</p>
+                                                </section>
+                                                <section>
+                                                    <h3 class="font-bold text-sm uppercase tracking-widest text-slate-400 mb-4">${L.exp}</h3>
+                                                    <div class="mb-4">
+                                                        <div class="flex justify-between font-bold text-sm mb-1">
+                                                            <span>${data.exp.role}</span>
+                                                            <span class="text-slate-500">${data.exp.date}</span>
+                                                        </div>
+                                                        <div class="text-xs text-slate-500 mb-2 uppercase">${data.exp.comp}</div>
+                                                        <p class="text-sm leading-6 text-slate-600">${data.exp.desc}</p>
+                                                    </div>
+                                                </section>
+                                                <section>
+                                                    <h3 class="font-bold text-sm uppercase tracking-widest text-slate-400 mb-4">${L.edu}</h3>
+                                                    <div><span class="font-bold text-sm">${data.edu.deg}</span>, <span class="text-sm text-slate-600">${data.edu.uni}</span> <span class="text-xs text-slate-400">(${data.edu.year})</span></div>
+                                                </section>
+                                            </div>
+                                        </div>`;
+                    }
+                    // --- 5. EXECUTIVE (Premium) ---
+                    else if (template === 'executive') {
+                        html = `
+                                        <div class="h-full bg-[#111] text-white p-12 font-serif" dir="${dir}">
+                                            <div class="border-l-4 border-gold pl-8 mb-12">
+                                                <h1 class="text-5xl font-bold mb-2">${data.name}</h1>
+                                                <p class="text-xl text-gold">${data.title}</p>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-12">
+                                                <div class="col-span-2 space-y-8">
+                                                    <section>
+                                                        <h3 class="font-bold text-gold uppercase text-sm mb-4 tracking-widest border-b border-gray-800 pb-2">${L.summary}</h3>
+                                                        <p class="text-gray-400 leading-relaxed text-sm">${data.summary}</p>
+                                                    </section>
+                                                    <section>
+                                                        <h3 class="font-bold text-gold uppercase text-sm mb-4 tracking-widest border-b border-gray-800 pb-2">${L.exp}</h3>
+                                                        <div>
+                                                            <h4 class="text-lg font-bold text-white">${data.exp.role}</h4>
+                                                            <div class="text-gold text-sm mb-2">${data.exp.comp} | ${data.exp.date}</div>
+                                                            <p class="text-gray-400 text-sm leading-relaxed">${data.exp.desc}</p>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                                <div class="space-y-8">
+                                                    <section>
+                                                        <h3 class="font-bold text-gold uppercase text-sm mb-4 tracking-widest border-b border-gray-800 pb-2">${L.contact}</h3>
+                                                        <div class="text-sm text-gray-400 space-y-2">
+                                                            <div class="block">${data.email}</div>
+                                                            <div class="block">${data.phone}</div>
+                                                        </div>
+                                                    </section>
+                                                    <section>
+                                                        <h3 class="font-bold text-gold uppercase text-sm mb-4 tracking-widest border-b border-gray-800 pb-2">${L.edu}</h3>
+                                                        <div class="text-white font-bold">${data.edu.deg}</div>
+                                                        <div class="text-gray-500 text-sm">${data.edu.uni}</div>
+                                                        <div class="text-gray-600 text-xs">${data.edu.year}</div>
+                                                    </section>
+                                                     <section>
+                                                        <h3 class="font-bold text-gold uppercase text-sm mb-4 tracking-widest border-b border-gray-800 pb-2">${L.skills}</h3>
+                                                        <div class="text-gray-400 text-sm leading-7">${data.skills.split(',').join(' • ')}</div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                    }
+                    return html;
+                },
+
+
+
+                aiWrite: function (fieldId) {
+                    const modal = document.getElementById('ai-loading');
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                            const dummy = "محترف متمرس ذو سجل حافل في إدارة المشاريع، يمتلك مهارات قيادية قوية وقدرة على حل المشكلات المعقدة لزيادة الكفاءة.";
+                            const input = document.getElementById('inp-' + fieldId);
+                            if (input) {
+                                input.value = dummy;
+                                this.updatePreview();
+                            }
+                        }, 1000);
+                    }
+                },
+
+                analyzeATS: function () {
+                    const modal = document.getElementById('ats-modal');
+                    if (modal) modal.classList.remove('hidden');
+                },
+
+                finish: function () {
+                    const t = app.templates.find(x => x.id === app.state.template);
+                    if (t && t.price === 'مجاني') {
+                        // Direct Download for Free
+                        alert('تم تحميل سيرتك الذاتية بنجاح! (محاكاة)');
+                    } else {
+                        // Payment for Premium
+                        const modal = document.getElementById('offer-modal');
+                        if (modal) modal.classList.remove('hidden');
+                    }
+                }
+            },
+            guarantee: {
+                toggleFaq: function (btn) {
+                    const content = btn.nextElementSibling;
+                    if (content) {
+                        content.classList.toggle('hidden');
+                        const icon = btn.querySelector('[data-lucide="chevron-down"]');
+                        if (icon) icon.classList.toggle('rotate-180');
+                    }
+                }
+            },
+            auth: {
+                user: null,
+                init: function () {
+                    const stored = localStorage.getItem('score_user');
+                    if (stored) {
+                        this.user = JSON.parse(stored);
+                        this.updateUI();
+                    }
+                },
+                login: function (email, password) {
+                    // Admin Login
+                    if (email === 'admin@score.com' && password) {
+                        this.user = {
+                            name: "Admin User",
+                            email: email,
+                            role: 'admin',
+                            plan: 'admin'
+                        };
+                        localStorage.setItem('score_user', JSON.stringify(this.user));
+                        this.updateUI();
+                        app.navigate('admin');
+                        return true;
+                    }
+
+                    // User Login (Mock)
+                    if (email && password) {
+                        // Try to load existing user data from "db"
+                        const db = JSON.parse(localStorage.getItem('score_db') || '{}');
+                        let userData = db[email];
+
+                        if (!userData) {
+                            userData = {
+                                name: "محمد أحمد",
+                                email: email,
+                                plan: "free",
+                                active_cvs: 1,
+                                interviews: 0
+                            };
+                            // Save to "db"
+                            db[email] = userData;
+                            localStorage.setItem('score_db', JSON.stringify(db));
+                        }
+
+                        this.user = userData;
+                        localStorage.setItem('score_user', JSON.stringify(this.user));
+                        this.updateUI();
+                        app.navigate('dashboard');
+                        return true;
+                    }
+                    return false;
+                },
+                register: function (name, email, password) {
+                    const db = JSON.parse(localStorage.getItem('score_db') || '{}');
+                    const userData = {
+                        name: name,
+                        email: email,
+                        plan: "free",
+                        active_cvs: 0,
+                        interviews: 0
+                    };
+                    db[email] = userData;
+                    localStorage.setItem('score_db', JSON.stringify(db));
+
+                    this.user = userData;
+                    localStorage.setItem('score_user', JSON.stringify(this.user));
+                    this.updateUI();
+                    app.navigate('pricing'); // Redirect to pricing after register
+                },
+                logout: function () {
+                    this.user = null;
+                    localStorage.removeItem('score_user');
+                    this.updateUI();
+                    app.navigate('home');
+                },
+                updateUI: function () {
+                    const btn = document.getElementById('header-auth-btn');
+                    if (this.user) {
+                        btn.textContent = this.user.role === 'admin' ? 'Admin Panel' : this.user.name;
+                        btn.onclick = () => app.navigate(this.user.role === 'admin' ? 'admin' : 'dashboard');
+                    } else {
+                        btn.textContent = "تسجيل الدخول";
+                        btn.onclick = () => app.navigate('auth');
+                    }
+                }
+            }
+        };
+        window.onload = function () {
+            try {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                app.auth.init();
+                app.navigate('home');
+                app.builder.setStep(0);
+            } catch (e) { console.error("App init failed", e); }
+        };
+    </script>
+    <script type="module" src="/index.tsx"></script>
+
+</body>
+
+</html>
