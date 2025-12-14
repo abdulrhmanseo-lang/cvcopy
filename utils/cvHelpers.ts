@@ -33,56 +33,62 @@ export const validateCV = (cv: CVData): Record<string, string> => {
   const errors: Record<string, string> = {};
 
   if (!cv.fullName.trim()) errors.fullName = "الاسم الكامل مطلوب";
+  else if (cv.fullName.length > 50) errors.fullName = "الاسم طويل جداً";
+
   if (!cv.jobTitle.trim()) errors.jobTitle = "المسمى الوظيفي مطلوب";
+  else if (cv.jobTitle.length > 50) errors.jobTitle = "المسمى الوظيفي طويل جداً";
+
   if (!cv.summary.trim()) errors.summary = "الملخص المهني مطلوب";
-  
+  else if (cv.summary.length > 500) errors.summary = "الملخص يجب أن لا يتجاوز 500 حرف";
+  else if (cv.summary.length < 50) errors.summary = "الملخص قصير جداً (أقل من 50 حرف)";
+
   if (cv.experience.length === 0) {
-      errors.experience = "يجب إضافة خبرة واحدة على الأقل";
+    errors.experience = "يجب إضافة خبرة واحدة على الأقل";
   }
 
   if (cv.skills.length < 3) {
-      errors.skills = "يجب إضافة 3 مهارات على الأقل";
+    errors.skills = "يجب إضافة 3 مهارات على الأقل";
   }
 
   if (cv.education.length === 0) {
-      errors.education = "يجب إضافة مؤهل تعليمي واحد على الأقل";
+    errors.education = "يجب إضافة مؤهل تعليمي واحد على الأقل";
   }
 
   return errors;
 };
 
 export const generatePdf = async (elementId: string, filename: string, language: Language) => {
-    const element = document.getElementById(elementId);
-    if (!element) throw new Error("Element not found");
+  const element = document.getElementById(elementId);
+  if (!element) throw new Error("Element not found");
 
-    // Optimized settings for A4 and Mobile Browsers
-    const opt = {
-      margin: 0, // No margin to allow full bleed templates
-      filename: `${filename.replace(/\s+/g, '_')}_CV.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, // High resolution
-        useCORS: true, 
-        logging: false,
-        letterRendering: true,
-        scrollY: 0,
-        windowWidth: 794 // Force A4 pixel width (approx) to prevent mobile layout shifts
-      },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+  // Optimized settings for A4 and Mobile Browsers
+  const opt = {
+    margin: 0, // No margin to allow full bleed templates
+    filename: `${filename.replace(/\s+/g, '_')}_CV.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2, // High resolution
+      useCORS: true,
+      logging: false,
+      letterRendering: true,
+      scrollY: 0,
+      windowWidth: 794 // Force A4 pixel width (approx) to prevent mobile layout shifts
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
 
-    // Force strict print styles and specific width during generation
-    const originalStyle = element.style.cssText;
-    element.style.width = '210mm';
-    element.style.height = '297mm'; // Force single page height context if needed, or let it flow
-    element.style.minHeight = '297mm';
-    element.classList.add('print-mode');
-    
-    try {
-        await html2pdf().set(opt).from(element).save();
-    } finally {
-        // Restore styling
-        element.classList.remove('print-mode');
-        element.style.cssText = originalStyle;
-    }
+  // Force strict print styles and specific width during generation
+  const originalStyle = element.style.cssText;
+  element.style.width = '210mm';
+  element.style.height = '297mm'; // Force single page height context if needed, or let it flow
+  element.style.minHeight = '297mm';
+  element.classList.add('print-mode');
+
+  try {
+    await html2pdf().set(opt).from(element).save();
+  } finally {
+    // Restore styling
+    element.classList.remove('print-mode');
+    element.style.cssText = originalStyle;
+  }
 };

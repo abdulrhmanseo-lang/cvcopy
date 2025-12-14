@@ -1,9 +1,16 @@
-/* 
-  React entry point disabled for Google AI Studio Preview.
-  The application is now running via index.html using Vanilla JS + Tailwind.
-*/
-// import React from "react";
-// import ReactDOM from "react-dom/client";
-// import App from "./App";
-// const root = ReactDOM.createRoot(document.getElementById("root"));
-// root.render(<App />);
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import './index.css';
+
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+} else {
+  console.error("Root element not found");
+}

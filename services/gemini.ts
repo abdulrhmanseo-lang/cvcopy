@@ -119,7 +119,7 @@ export const analyzeCV = async (data: CVData): Promise<ATSAnalysis> => {
 
     const text = response.text;
     if (!text) throw new Error("No response from AI");
-    
+
     return JSON.parse(text) as ATSAnalysis;
 
   } catch (error) {
@@ -202,18 +202,18 @@ export const generateCVFromFreeText = async (text: string, language: Language): 
     });
 
     const parsed = JSON.parse(response.text || "{}");
-    
+
     // Add unique IDs to generated items
     if (parsed.experience) {
-      parsed.experience = parsed.experience.map((e: any) => ({ 
-        ...e, 
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9) 
+      parsed.experience = parsed.experience.map((e: any) => ({
+        ...e,
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
       }));
     }
     if (parsed.education) {
-      parsed.education = parsed.education.map((e: any) => ({ 
-        ...e, 
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9) 
+      parsed.education = parsed.education.map((e: any) => ({
+        ...e,
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
       }));
     }
 
@@ -221,5 +221,46 @@ export const generateCVFromFreeText = async (text: string, language: Language): 
   } catch (error) {
     console.error("Gemini Free Text Generation Error:", error);
     throw error;
+  }
+};
+
+export const generateCoverLetter = async (
+  cvSummary: string,
+  jobTitle: string,
+  companyName: string,
+  tone: 'professional' | 'enthusiastic' | 'confident',
+  targetJobDescription: string,
+  language: Language
+): Promise<string> => {
+  try {
+    const langInstruction = language === Language.English ? "in English" : "in Arabic";
+    const prompt = `
+      Write a ${tone} cover letter ${langInstruction}.
+      
+      Candidate Summary: "${cvSummary}"
+      Target Job: ${jobTitle} at ${companyName}.
+      ${targetJobDescription ? `Target Job Description: ${targetJobDescription}` : ''}
+      
+      The cover letter should be concise, persuasive, and tailored to the company.
+      Structure:
+      - Salutation
+      - Strong opening hook
+      - Why I'm a fit (skills/experience)
+      - Why this company
+      - Call to action
+      - Sign off
+      
+      Output ONLY the body of the letter. Do not include placeholders like "[Your Name]". Assume the header is handled separately.
+    `;
+
+    const response = await ai.models.generateContent({
+      model: modelId,
+      contents: prompt,
+    });
+
+    return response.text || "Could not generate cover letter.";
+  } catch (error) {
+    console.error("Gemini Cover Letter Error:", error);
+    return "Failed to generate cover letter. Please try again.";
   }
 };

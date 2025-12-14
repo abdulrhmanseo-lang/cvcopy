@@ -16,7 +16,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navLinks = [
     { name: 'الرئيسية', path: '/' },
     { name: 'قوالب السيرة', path: '/templates' },
-    { name: 'خدمة التوظيف', path: '/job-guarantee', isNew: true },
+    { name: 'خطاب التقديم', path: '/cover-letter', isNew: true },
+    { name: 'خدمة التوظيف', path: '/job-guarantee' },
     { name: 'الأسعار', path: '/#pricing' },
   ];
 
@@ -27,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-dark/80 backdrop-blur-md border-b border-white/5">
         <div className="container mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
-          
+
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 md:gap-3 group">
             <div className="relative">
@@ -45,14 +46,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
+              <Link
+                key={link.name}
                 to={link.path}
-                className={`text-sm font-medium transition-all hover:-translate-y-0.5 flex items-center gap-2 ${
-                  location.pathname === link.path 
-                    ? 'text-primary' 
+                className={`text-sm font-medium transition-all hover:-translate-y-0.5 flex items-center gap-2 ${location.pathname === link.path
+                    ? 'text-primary'
                     : 'text-gray-400 hover:text-white'
-                }`}
+                  }`}
               >
                 {link.name}
                 {link.isNew && <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 rounded-md">جديد</span>}
@@ -62,31 +62,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           {/* CTA & Auth */}
           <div className="hidden md:flex items-center gap-4">
-             {user ? (
-                 <>
-                  <Link to="/dashboard" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    لوحة التحكم
-                  </Link>
-                  <button onClick={logout} className="text-sm font-medium text-gray-400 hover:text-red-400 transition-colors">
-                    خروج
-                  </button>
-                 </>
-             ) : (
-                <Link to="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    تسجيل الدخول
+            {user ? (
+              <>
+                <Link to="/dashboard" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                  لوحة التحكم
                 </Link>
-             )}
-            
+                <button onClick={logout} className="text-sm font-medium text-gray-400 hover:text-red-400 transition-colors">
+                  خروج
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                تسجيل الدخول
+              </Link>
+            )}
+
             <Link to="/builder">
-               <button className="bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white px-6 py-2.5 rounded-full font-bold shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:shadow-[0_0_30px_rgba(124,58,237,0.6)] transition-all active:scale-95 flex items-center gap-2 border border-white/10 text-sm md:text-base">
-                 <span>ابدأ الآن</span>
-                 <FileText size={18} />
-               </button>
+              <button className="bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white px-6 py-2.5 rounded-full font-bold shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:shadow-[0_0_30px_rgba(124,58,237,0.6)] transition-all active:scale-95 flex items-center gap-2 border border-white/10 text-sm md:text-base">
+                <span>ابدأ الآن</span>
+                <FileText size={18} />
+              </button>
             </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
+          <button
             className="md:hidden p-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -97,9 +97,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-[#121212] border-b border-white/5 p-4 flex flex-col gap-2 animate-fade-in absolute w-full z-50 shadow-2xl h-[calc(100vh-64px)] overflow-y-auto">
-             {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
                 to={link.path}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-gray-300 font-bold py-4 px-4 hover:bg-white/5 rounded-xl transition-colors flex justify-between items-center text-lg border-b border-white/5 last:border-0"
@@ -108,29 +108,29 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {link.isNew && <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full">جديد</span>}
               </Link>
             ))}
-            
+
             <div className="mt-4 flex flex-col gap-3">
-                {user ? (
-                   <>
-                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center bg-white/5 text-white py-4 rounded-xl font-bold border border-white/10">
-                        لوحة التحكم
-                     </Link>
-                     <button onClick={() => {logout(); setIsMobileMenuOpen(false)}} className="w-full text-center text-red-400 py-2">تسجيل الخروج</button>
-                   </>
-                ) : (
-                    <Link 
-                    to="/login" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full text-center bg-white/5 text-white py-4 rounded-xl font-bold border border-white/10 hover:bg-white/10"
-                    >
-                    تسجيل الدخول
-                    </Link>
-                )}
-                <Link to="/builder" onClick={() => setIsMobileMenuOpen(false)}>
-                <button className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 text-lg flex items-center justify-center gap-2">
-                    أنشئ سيرتك الآن <FileText size={20} />
-                </button>
+              {user ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center bg-white/5 text-white py-4 rounded-xl font-bold border border-white/10">
+                    لوحة التحكم
+                  </Link>
+                  <button onClick={() => { logout(); setIsMobileMenuOpen(false) }} className="w-full text-center text-red-400 py-2">تسجيل الخروج</button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full text-center bg-white/5 text-white py-4 rounded-xl font-bold border border-white/10 hover:bg-white/10"
+                >
+                  تسجيل الدخول
                 </Link>
+              )}
+              <Link to="/builder" onClick={() => setIsMobileMenuOpen(false)}>
+                <button className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 text-lg flex items-center justify-center gap-2">
+                  أنشئ سيرتك الآن <FileText size={20} />
+                </button>
+              </Link>
             </div>
           </div>
         )}
@@ -149,8 +149,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4 md:px-8 grid md:grid-cols-4 gap-8 md:gap-12 relative z-10">
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6">
-               <Star size={24} className="text-primary fill-primary" />
-               <span className="text-2xl font-black text-white">سكور</span>
+              <Star size={24} className="text-primary fill-primary" />
+              <span className="text-2xl font-black text-white">سكور</span>
             </Link>
             <p className="max-w-md text-gray-500 leading-relaxed mb-8 text-sm md:text-base">
               المنصة العربية الأولى المتخصصة في إنشاء سير ذاتية متوافقة مع أنظمة ATS للشركات السعودية والخليجية الكبرى، مدعومة بأحدث تقنيات الذكاء الاصطناعي.
@@ -192,7 +192,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4 md:px-8 mt-12 md:mt-16 pt-8 border-t border-white/5 text-center flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
           <p>© 2025 سكور Score. جميع الحقوق محفوظة.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
-             <span>صنع بحب في السعودية 🇸🇦</span>
+            <span>صنع بحب في السعودية 🇸🇦</span>
           </div>
         </div>
       </footer>
