@@ -2,11 +2,11 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { CVData, ATSAnalysis, Language } from "../types";
 
-// Declaration to prevent TS errors in browser environment where process might be missing from types
-// We assume process.env.API_KEY is injected by the bundler or polyfilled in index.html
-declare const process: { env: { API_KEY: string } };
+// Safe API Key retrieval for Vite/Browser environment
+// @ts-ignore
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.API_KEY || '';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey });
 const modelId = "gemini-2.5-flash";
 
 export const generateProfessionalSummary = async (currentSummary: string, jobTitle: string, targetCompany: string, language: Language): Promise<string> => {
