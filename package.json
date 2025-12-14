@@ -2,6 +2,7 @@
   "name": "copy-of-score-|-سكور",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://abdulrhmanseo-lang.github.io/cvcopy/",
   "type": "module",
   "scripts": {
     "dev": "vite",
